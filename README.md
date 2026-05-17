@@ -1,4 +1,4 @@
-# StayBook — AI-Powered Travel Planning Platform
+# Smart Travel Planner Platform - StayBook
 
 A modern full-stack travel planning platform with collaborative trip planning, interactive maps, budget management, and real-time collaboration.
 
