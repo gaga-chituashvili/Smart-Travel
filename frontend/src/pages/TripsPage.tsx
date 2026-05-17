@@ -6,6 +6,14 @@ import { Plus, X, Calendar, DollarSign, Users } from 'lucide-react'
 import { api } from '../lib/axios'
 import toast from 'react-hot-toast'
 
+interface TripForm {
+  name: string
+  description: string
+  startDate: string
+  endDate: string
+  totalBudget: number
+}
+
 export default function TripsPage() {
   const navigate = useNavigate()
   const qc = useQueryClient()
@@ -18,7 +26,7 @@ export default function TripsPage() {
   })
 
   const createTrip = useMutation({
-    mutationFn: (data: any) => api.post('/trips', data).then((r) => r.data),
+    mutationFn: (data: TripForm) => api.post('/trips', data).then((r) => r.data),
     onSuccess: (trip) => {
       qc.invalidateQueries({ queryKey: ['trips'] })
       toast.success('Trip created!')
@@ -35,6 +43,17 @@ export default function TripsPage() {
     ACTIVE: 'bg-green-50 text-green-600',
     COMPLETED: 'bg-gray-100 text-gray-500',
     CANCELLED: 'bg-red-50 text-red-500',
+  }
+
+  const handleCreate = () => {
+    if (!form.name) return
+    createTrip.mutate({
+      name: form.name,
+      description: form.description,
+      startDate: form.startDate,
+      endDate: form.endDate,
+      totalBudget: parseFloat(form.totalBudget) || 0,
+    })
   }
 
   return (
@@ -99,7 +118,7 @@ export default function TripsPage() {
                   </div>
                   <div className="flex -space-x-1.5">
                     {trip.members?.slice(0, 3).map((m: any) => (
-                      <div key={m.id} className="w-6 h-6 rounded-full bg-gradient-to-br from-brand-400 to-teal-500 border-2 border-white flex items-center justify-center text-white text-xs font-bold">
+                      <div key={m.id} className="w-6 h-6 rounded-full border-2 border-white flex items-center justify-center text-white text-xs font-bold" style={{ background: 'linear-gradient(135deg, #e8a03a, #1a6b5a)' }}>
                         {m.user.name.slice(0, 1)}
                       </div>
                     ))}
@@ -111,10 +130,10 @@ export default function TripsPage() {
 
           <motion.div
             whileHover={{ y: -3 }}
-            className="border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer hover:border-brand-400 transition-colors group"
+            className="border-2 border-dashed border-gray-200 rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer hover:border-brand-400 transition-colors group"
             onClick={() => setShowModal(true)}
           >
-            <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-3 group-hover:bg-brand-50">
+            <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-3 group-hover:bg-orange-50">
               <Plus size={20} className="text-gray-400 group-hover:text-brand-500" />
             </div>
             <p className="font-medium text-sm text-gray-500 group-hover:text-brand-500">New Trip</p>
@@ -122,7 +141,6 @@ export default function TripsPage() {
         </div>
       )}
 
-      {/* Modal */}
       <AnimatePresence>
         {showModal && (
           <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -130,13 +148,12 @@ export default function TripsPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white dark:bg-gray-900 rounded-3xl p-6 w-full max-w-md shadow-2xl"
+              className="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl"
             >
               <div className="flex items-center justify-between mb-5">
                 <h2 className="font-display text-xl font-bold">Plan New Trip</h2>
                 <button onClick={() => setShowModal(false)} className="btn-ghost p-1.5"><X size={18} /></button>
               </div>
-
               <div className="space-y-4">
                 <div>
                   <label className="label">Trip Name *</label>
@@ -161,9 +178,9 @@ export default function TripsPage() {
                   <input type="number" className="input" placeholder="e.g. 2500" value={form.totalBudget} onChange={(e) => setForm({ ...form, totalBudget: e.target.value })} />
                 </div>
                 <button
-                  className="btn-primary w-full justify-center py-3"
+                  style={{ width: '100%', padding: '12px', background: form.name ? '#c17d3a' : '#e5e7eb', color: form.name ? 'white' : '#9ca3af', border: 'none', borderRadius: '12px', fontSize: '15px', fontWeight: 600, cursor: form.name ? 'pointer' : 'not-allowed' }}
                   disabled={!form.name || createTrip.isPending}
-                  onClick={() => createTrip.mutate({ ...form, totalBudget: parseFloat(form.totalBudget) || 0 })}
+                  onClick={handleCreate}
                 >
                   {createTrip.isPending ? 'Creating...' : '🚀 Create Trip'}
                 </button>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { Edit2, MapPin, Calendar, Check, X } from 'lucide-react'
 import { api } from '../lib/axios'
@@ -8,7 +8,7 @@ import toast from 'react-hot-toast'
 
 export default function ProfilePage() {
   const { user, setUser } = useAuthStore()
-  const qc = useQueryClient()
+  // // const qc = useQueryClient()
   const [editing, setEditing] = useState(false)
   const [form, setForm] = useState({ name: user?.name || '', bio: user?.bio || '', location: user?.location || '' })
 

@@ -215,7 +215,7 @@ function DayBlock({
   return (
     <div className="card overflow-hidden">
       <button onClick={onToggle} className="w-full flex items-center gap-3">
-        <div className="w-8 h-8 rounded-full bg-brand-500 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">
+        <div className="w-8 h-8 rounded-full bg-brand-500 text-white flex items-center justify-center font-bold text-sm shrink-0">
           {day.dayNumber}
         </div>
         <div className="flex-1 text-left">
@@ -398,7 +398,7 @@ export default function TripDetailPage() {
   const toggleDay = (dayId: string) =>
     setCollapsedDays((prev) => {
       const next = new Set(prev);
-      next.has(dayId) ? next.delete(dayId) : next.add(dayId);
+      if (next.has(dayId)) { next.delete(dayId) } else { next.add(dayId) };
       return next;
     });
 
