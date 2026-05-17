@@ -1,0 +1,264 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String?
+  avatarUrl    String?
+  googleId     String?  @unique
+  bio          String?
+  location     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  trips         TripMember[]
+  ownedTrips    Trip[]          @relation("TripOwner")
+  comments      Comment[]
+  reactions     Reaction[]
+  savedDests    SavedDestination[]
+  expenses      Expense[]
+  notifications Notification[]
+}
+
+model Trip {
+  id          String     @id @default(cuid())
+  name        String
+  description String?
+  coverImage  String?
+  startDate   DateTime?
+  endDate     DateTime?
+  totalBudget Float      @default(0)
+  currency    String     @default("USD")
+  status      TripStatus @default(PLANNING)
+  isPublic    Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  ownerId      String
+  owner        User              @relation("TripOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members      TripMember[]
+  days         TripDay[]
+  expenses     Expense[]
+  comments     Comment[]
+  destinations TripDestination[]
+  invites      TripInvite[]
+}
+
+enum TripStatus {
+  PLANNING
+  UPCOMING
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+model TripMember {
+  id       String     @id @default(cuid())
+  role     MemberRole @default(MEMBER)
+  joinedAt DateTime   @default(now())
+
+  tripId String
+  trip   Trip   @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([tripId, userId])
+}
+
+enum MemberRole {
+  OWNER
+  EDITOR
+  MEMBER
+  VIEWER
+}
+
+model TripInvite {
+  id        String   @id @default(cuid())
+  email     String
+  token     String   @unique @default(cuid())
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  tripId   String
+  trip     Trip   @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  senderId String
+}
+
+model TripDay {
+  id         String     @id @default(cuid())
+  dayNumber  Int
+  date       DateTime?
+  title      String?
+  notes      String?
+  order      Int        @default(0)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  tripId     String
+  trip       Trip       @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  activities Activity[]
+
+  @@unique([tripId, dayNumber])
+}
+
+model Activity {
+  id         String       @id @default(cuid())
+  name       String
+  type       ActivityType @default(SIGHT)
+  startTime  String?
+  endTime    String?
+  cost       Float        @default(0)
+  notes      String?
+  address    String?
+  lat        Float?
+  lng        Float?
+  imageUrl   String?
+  bookingUrl String?
+  order      Int          @default(0)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  dayId String
+  day   TripDay @relation(fields: [dayId], references: [id], onDelete: Cascade)
+}
+
+enum ActivityType {
+  HOTEL
+  FLIGHT
+  TRANSPORT
+  FOOD
+  SIGHT
+  ACTIVITY
+  SHOPPING
+  OTHER
+}
+
+model Destination {
+  id          String   @id @default(cuid())
+  name        String
+  country     String
+  countryCode String
+  city        String?
+  description String?
+  imageUrl    String?
+  lat         Float
+  lng         Float
+  avgCost     Float?
+  rating      Float    @default(0)
+  reviewCount Int      @default(0)
+  category    String[]
+  bestMonths  Int[]
+  isTrending  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  savedBy   SavedDestination[]
+  tripDests TripDestination[]
+}
+
+model TripDestination {
+  id            String    @id @default(cuid())
+  order         Int       @default(0)
+  arrivesAt     DateTime?
+  departsAt     DateTime?
+
+  tripId        String
+  trip          Trip        @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  destinationId String
+  destination   Destination @relation(fields: [destinationId], references: [id])
+
+  @@unique([tripId, destinationId])
+}
+
+model SavedDestination {
+  savedAt DateTime @default(now())
+
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  destinationId String
+  destination   Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+
+  @@id([userId, destinationId])
+}
+
+model Expense {
+  id          String          @id @default(cuid())
+  description String
+  amount      Float
+  currency    String          @default("USD")
+  category    ExpenseCategory
+  date        DateTime        @default(now())
+  notes       String?
+  createdAt   DateTime        @default(now())
+
+  tripId   String
+  trip     Trip   @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  paidById String
+  paidBy   User   @relation(fields: [paidById], references: [id])
+}
+
+enum ExpenseCategory {
+  HOTEL
+  FLIGHT
+  TRANSPORT
+  FOOD
+  ACTIVITIES
+  SHOPPING
+  OTHER
+}
+
+model Comment {
+  id        String     @id @default(cuid())
+  text      String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  tripId    String
+  trip      Trip       @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User       @relation(fields: [authorId], references: [id])
+  reactions Reaction[]
+}
+
+model Reaction {
+  id        String   @id @default(cuid())
+  emoji     String
+  createdAt DateTime @default(now())
+
+  commentId String
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+
+  @@unique([commentId, userId, emoji])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  type      NotificationType
+  title     String
+  message   String
+  data      Json?
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum NotificationType {
+  TRIP_INVITE
+  COMMENT
+  ACTIVITY_UPDATE
+  BUDGET_ALERT
+  TRIP_REMINDER
+  COLLAB_JOIN
+}
