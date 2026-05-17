@@ -180,25 +180,7 @@ VITE_SOCKET_URL=https://your-backend.onrender.com
 - ✅ Fully Responsive Design
 - ✅ Spending Charts (Recharts)
 
----
 
-## 🔑 Demo Account
-Email: demo@staybook.io
-Password: password123
-
----
-
-## 📝 Git Workflow
-
-```bash
-# Backend changes
-cd backend
-git add -A && git commit -m "feat: your message" && git push
-
-# Frontend changes  
-cd frontend
-git add -A && git commit -m "feat: your message" && git push
-```
 
 ---
 
