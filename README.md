@@ -36,6 +36,7 @@ A modern full-stack travel planning platform with collaborative trip planning, i
 ---
 
 ## 📁 Project Structure
+```
 smarttravel/
 ├── frontend/                  # React + TypeScript
 │   ├── src/
@@ -75,6 +76,7 @@ smarttravel/
 │   ├── schema.prisma
 │   └── seed.js
 └── .env
+```
 
 ---
 
