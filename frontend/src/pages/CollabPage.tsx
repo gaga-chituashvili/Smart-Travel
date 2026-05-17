@@ -129,7 +129,7 @@ export default function CollabPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="flex gap-3"
               >
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-400 to-teal-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                <div className="w-8 h-8 rounded-full bg-linear-to-br from-brand-400 to-teal-500 flex items-center justify-center text-white text-xs font-bold shrink-0">
                   {comment.author.name.slice(0, 2).toUpperCase()}
                 </div>
                 <div className="flex-1">
@@ -234,12 +234,12 @@ export default function CollabPage() {
             )}
           </div>
           <div className="space-y-3">
-            {members.map((m: any) => {
+            {members.map((m: { id: string; user: { name: string } }) => {
               const isOnline = onlineUsers.some((u) => u.id === m.user.id);
               return (
                 <div key={m.id} className="flex items-center gap-3">
                   <div className="relative">
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-brand-400 to-teal-500 flex items-center justify-center text-white text-sm font-bold">
+                    <div className="w-9 h-9 rounded-full bg-linear-to-br from-brand-400 to-teal-500 flex items-center justify-center text-white text-sm font-bold">
                       {m.user.name.slice(0, 2).toUpperCase()}
                     </div>
                     <div

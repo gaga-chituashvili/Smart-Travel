@@ -71,7 +71,7 @@ const PORT = process.env.PORT || 4000;
 async function start() {
   await prisma.$connect();
   await redisClient.connect();
-  httpServer.listen(PORT, () => {
+  httpServer.listen(PORT, "0.0.0.0", () => {
     console.log(`🚀 StayBook API running on http://localhost:${PORT}`);
   });
 }

@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { Home, Map, Calendar, Wallet, Building, Users, Heart, User } from 'lucide-react'
+import { Home, Map, Calendar, Heart, User } from 'lucide-react'
 import { useUIStore } from '../../store'
 import { motion } from 'framer-motion'
 

@@ -133,7 +133,7 @@ export default function HomePage() {
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative rounded-3xl overflow-hidden h-64 bg-gradient-to-br from-gray-900 via-brand-900 to-teal-900 flex items-center"
+        className="relative rounded-3xl overflow-hidden h-64 bg-linear-to-br from-gray-900 via-brand-900 to-teal-900 flex items-center"
       >
         <div
           className="absolute inset-0 opacity-10"
@@ -290,7 +290,7 @@ export default function HomePage() {
             </button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {trips.slice(0, 3).map((trip: any) => (
+            {trips.slice(0, 3).map((trip: { id: string; name: string; startDate: string | null; totalBudget: number; members?: { id: string; user: { name: string } }[] }) => (
               <motion.div
                 key={trip.id}
                 whileHover={{ y: -2 }}
@@ -305,7 +305,7 @@ export default function HomePage() {
                 </p>
                 <div className="flex items-center justify-between">
                   <div className="flex -space-x-2">
-                    {trip.members?.slice(0, 3).map((m: any) => (
+                    {trip.members?.slice(0, 3).map((m: { id: string; user: { name: string } }) => (
                       <div
                         key={m.id}
                         className="w-6 h-6 rounded-full bg-brand-400 border-2 border-white flex items-center justify-center text-white text-xs font-bold"
