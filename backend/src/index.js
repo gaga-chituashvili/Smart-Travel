@@ -16,6 +16,7 @@ import budgetRoutes from "./routes/budget.js";
 import collabRoutes from "./routes/collab.js";
 
 const app = express();
+app.set("trust proxy", 1);
 const httpServer = createServer(app);
 
 export const io = new Server(httpServer, {

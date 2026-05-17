@@ -91,7 +91,7 @@ export default function ProfilePage() {
           <div className="space-y-3">
             {trips.slice(0, 5).map((trip: any) => (
               <div key={trip.id} className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-400 to-teal-500 flex items-center justify-center text-white text-lg">✈️</div>
+                <div className="w-10 h-10 rounded-xl bg-gradient-br from-brand-400 to-teal-500 flex items-center justify-center text-white text-lg">✈️</div>
                 <div className="flex-1">
                   <p className="font-medium text-sm">{trip.name}</p>
                   <p className="text-xs text-gray-500 flex items-center gap-1">
